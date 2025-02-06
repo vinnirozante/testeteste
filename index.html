@@ -65,16 +65,17 @@
                 scene.add(cup);
                 cup.position.y = -1;
                 cup.scale.set(1.5, 1.5, 1.5);
-                camera.position.set(0, 0, 2.5);
+                camera.position.set(0, 0, 3);
                 animate();
             }, undefined, function(error) {
                 console.error("Erro ao carregar o modelo:", error);
             });
 
-            // Adicionar zoom com scroll do mouse
+            // Adicionar zoom com scroll do mouse (mantendo centralizado)
             window.addEventListener("wheel", function(event) {
-                camera.position.z += event.deltaY * 0.01;
-                camera.position.z = Math.max(1, Math.min(5, camera.position.z)); // Limitar o zoom
+                let zoomSpeed = 0.1;
+                let newZ = camera.position.z + (event.deltaY * zoomSpeed * 0.1);
+                camera.position.z = Math.max(1.5, Math.min(4, newZ)); // Mantendo limites
             });
 
             // Rotação automática quando não estiver interagindo
