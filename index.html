@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mister Copo</title>
+    <title>Visualizador 3D de Copo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
 </head>
@@ -13,7 +13,10 @@
     
     <script>
         let scene, camera, renderer, cup;
-        
+        let isDragging = false;
+        let lastMouseX = 0;
+        let rotationSpeed = 0.01; // Velocidade da rotação automática
+
         function init() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -29,13 +32,40 @@
                 cup = gltf.scene;
                 scene.add(cup);
                 cup.position.y = -1;
-                camera.position.z = 1;
+                camera.position.z = 3;
                 animate();
+            });
+
+            // Zoom com Scroll do Mouse
+            window.addEventListener("wheel", function(event) {
+                camera.position.z += event.deltaY * 0.01;
+                camera.position.z = Math.max(1, Math.min(5, camera.position.z)); // Limita o zoom
+            });
+
+            // Eventos para detectar clique e arrastar
+            document.addEventListener("mousedown", function(event) {
+                isDragging = true;
+                lastMouseX = event.clientX;
+            });
+
+            document.addEventListener("mouseup", function() {
+                isDragging = false;
+            });
+
+            document.addEventListener("mousemove", function(event) {
+                if (isDragging && cup) {
+                    let deltaX = event.clientX - lastMouseX;
+                    cup.rotation.y += deltaX * 0.01; // Rotação manual ao arrastar o mouse
+                    lastMouseX = event.clientX;
+                }
             });
         }
 
         function animate() {
             requestAnimationFrame(animate);
+            if (!isDragging && cup) {
+                cup.rotation.y += rotationSpeed; // Rotação automática
+            }
             renderer.render(scene, camera);
         }
 
