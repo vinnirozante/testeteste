@@ -33,7 +33,7 @@
     scene.add(cup);
     cup.position.y = -1;
     cup.scale.set(1.5, 1.5, 1.5); // Aumenta 50% o tamanho do copo
-    camera.position.z = 2; // Ajusta o zoom para acompanhar o novo tamanho
+    camera.position.z = Math.max(0.5, Math.min(3, camera.position.z)); // Permite um zoom maior
     animate();
 });
 
