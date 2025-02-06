@@ -3,64 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personalizador de Copos 3D</title>
+    <title>Personalizador de Copo 3D</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
     <style>
         body {
-            text-align: center;
             font-family: Arial, sans-serif;
             margin: 0;
-            background-color: #03fcf4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            margin-top: 20px;
         }
         #container {
-            margin-top: 20px;
+            width: 100%;
+            height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
         }
         canvas {
             display: block;
-            margin: auto;
-            background: black;
+        }
+        #controls {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <h1>Mister Copo</h1>
-        <p>Faça o upload de uma textura desejada.</p>
-        <input type="file" id="textureInput" accept="image/*">
-    </div>
-
-    <canvas id="canvas"></canvas>
+    <h1>Personalize seu Copo 3D</h1>
+    <p>Faça o upload de uma textura para aplicá-la ao copo.</p>
+    <input type="file" id="textureInput" accept="image/*">
+    <div id="container"></div>
 
     <script>
         let scene, camera, renderer, cup;
+        let controlsEnabled = false;
 
         function init() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ antialias: true, canvas: document.getElementById('canvas') });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight * 0.8);
+            document.getElementById('container').appendChild(renderer.domElement);
 
+            // Luz ambiente + Direcional para melhor iluminação
             const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
             scene.add(light);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
 
+            // Carregar o modelo do copo
             const loader = new THREE.GLTFLoader();
             loader.load('copo.glb', function(gltf) {
                 cup = gltf.scene;
                 scene.add(cup);
                 cup.position.y = -1;
-                cup.scale.set(1.5, 1.5, 1.5); // Aumenta o tamanho do copo
-                camera.position.z = 2; // Aproxima a câmera
+                cup.scale.set(1.5, 1.5, 1.5);
+                camera.position.set(0, 0, 2.5);
                 animate();
+            }, undefined, function(error) {
+                console.error("Erro ao carregar o modelo:", error);
+            });
+
+            // Adicionar zoom com scroll do mouse
+            window.addEventListener("wheel", function(event) {
+                camera.position.z += event.deltaY * 0.01;
+                camera.position.z = Math.max(1, Math.min(5, camera.position.z)); // Limitar o zoom
+            });
+
+            // Rotação automática quando não estiver interagindo
+            function rotateCup() {
+                if (cup && !controlsEnabled) {
+                    cup.rotation.y += 0.005;
+                }
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                rotateCup();
+                renderer.render(scene, camera);
+            }
+
+            // Habilitar/desabilitar rotação automática ao interagir
+            document.getElementById("container").addEventListener("mousedown", function() {
+                controlsEnabled = true;
+            });
+            document.addEventListener("mouseup", function() {
+                controlsEnabled = false;
             });
         }
 
-        function animate() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-        }
-
+        // Aplicar textura no copo
         document.getElementById('textureInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
@@ -72,4 +111,17 @@
                             cup.traverse(function(child) {
                                 if (child.isMesh) {
                                     child.material.map = texture;
-     
+                                    child.material.needsUpdate = true;
+                                }
+                            });
+                        }
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>
