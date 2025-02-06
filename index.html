@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador 3D de Copo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+<body>
+    <input type="file" id="textureInput" accept="image/*">
+    <canvas id="canvas"></canvas>
+    
+    <script>
+        let scene, camera, renderer, cup;
+        
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true, canvas: document.getElementById('canvas') });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
+            scene.add(light);
+
+            const loader = new THREE.GLTFLoader();
+            loader.load('copo.glb', function(gltf) {
+                cup = gltf.scene;
+                scene.add(cup);
+                cup.position.y = -1;
+                camera.position.z = 3;
+                animate();
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        document.getElementById('textureInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const textureLoader = new THREE.TextureLoader();
+                    textureLoader.load(e.target.result, function(texture) {
+                        if (cup) {
+                            cup.traverse(function(child) {
+                                if (child.isMesh) {
+                                    child.material.map = texture;
+                                    child.material.needsUpdate = true;
+                                }
+                            });
+                        }
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>
