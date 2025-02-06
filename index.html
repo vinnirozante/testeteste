@@ -29,11 +29,14 @@
 
             const loader = new THREE.GLTFLoader();
             loader.load('copo.glb', function(gltf) {
-                cup = gltf.scene;
-                scene.add(cup);
-                cup.position.y = -1;
-                camera.position.z = 3;
-                animate();
+    cup = gltf.scene;
+    scene.add(cup);
+    cup.position.y = -1;
+    cup.scale.set(1.5, 1.5, 1.5); // Aumenta 50% o tamanho do copo
+    camera.position.z = 2; // Ajusta o zoom para acompanhar o novo tamanho
+    animate();
+});
+
             });
 
             // Zoom com Scroll do Mouse
