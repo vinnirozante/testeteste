@@ -13,10 +13,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #f4f4f4;
+            background-color: #f4f4f4; /* Cor de fundo da página (pode ser alterada) */
         }
         h1 {
             margin-top: 20px;
+            color: #333; /* Cor do título (pode ser alterada) */
+            font-size: 2.5em; /* Tamanho do título (pode ser alterado) */
+        }
+        p {
+            color: #666; /* Cor do texto descritivo (pode ser alterada) */
+            font-size: 1.2em; /* Tamanho do texto descritivo (pode ser alterado) */
         }
         #container {
             width: 100%;
@@ -24,7 +30,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #fff;
+            background-color: #fff; /* Cor de fundo do contêiner 3D (pode ser alterada) */
+            border-radius: 10px; /* Bordas arredondadas (pode ser ajustado) */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave (pode ser ajustada) */
         }
         canvas {
             display: block;
@@ -32,10 +40,18 @@
         #controls {
             margin-top: 10px;
         }
+        input[type="file"] {
+            margin-top: 20px;
+            padding: 10px;
+            border: 2px solid #ccc; /* Cor da borda do input (pode ser alterada) */
+            border-radius: 5px; /* Bordas arredondadas do input (pode ser ajustado) */
+            background-color: #fff; /* Cor de fundo do input (pode ser alterada) */
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <h1>Mister Copo</h1>
+    <h1>Personalize seu Copo 3D</h1>
     <p>Faça o upload de uma textura para aplicá-la ao copo.</p>
     <input type="file" id="textureInput" accept="image/*">
     <div id="container"></div>
@@ -52,9 +68,9 @@
             document.getElementById('container').appendChild(renderer.domElement);
 
             // Luz ambiente + Direcional para melhor iluminação
-            const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
+            const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1); /* Cor da luz ambiente (pode ser alterada) */
             scene.add(light);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1); /* Cor da luz direcional (pode ser alterada) */
             directionalLight.position.set(5, 5, 5);
             scene.add(directionalLight);
 
@@ -64,8 +80,8 @@
                 cup = gltf.scene;
                 scene.add(cup);
                 cup.position.y = -1;
-                cup.scale.set(1.5, 1.5, 1.5);
-                camera.position.set(0, 0, 3);
+                cup.scale.set(1.5, 1.5, 1.5); /* Tamanho do copo na exibição (pode ser ajustado) */
+                camera.position.set(0, 0, 3); /* Posição da câmera (pode ser ajustada) */
                 animate();
             }, undefined, function(error) {
                 console.error("Erro ao carregar o modelo:", error);
@@ -73,15 +89,15 @@
 
             // Adicionar zoom com scroll do mouse (mantendo centralizado)
             window.addEventListener("wheel", function(event) {
-                let zoomSpeed = 0.1;
+                let zoomSpeed = 0.1; /* Velocidade do zoom (pode ser ajustada) */
                 let newZ = camera.position.z + (event.deltaY * zoomSpeed * 0.1);
-                camera.position.z = Math.max(1.5, Math.min(4, newZ)); // Mantendo limites
+                camera.position.z = Math.max(1.5, Math.min(4, newZ)); /* Limites do zoom (pode ser ajustado) */
             });
 
             // Rotação automática quando não estiver interagindo
             function rotateCup() {
                 if (cup && !controlsEnabled) {
-                    cup.rotation.y += 0.005;
+                    cup.rotation.y += 0.005; /* Velocidade da rotação automática (pode ser ajustada) */
                 }
             }
 
