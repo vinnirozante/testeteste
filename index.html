@@ -7,7 +7,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
     <style>
-        /* Estilos modernos */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -16,14 +15,14 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa, #c3cfe2); /* Gradiente suave */
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
             color: #333;
         }
         h1 {
             margin-top: 20px;
             font-size: 2.5em;
             color: #444;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Sombra no texto */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
         p {
             font-size: 1.1em;
@@ -36,7 +35,7 @@
             height: 60vh;
             background-color: #fff;
             border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra mais pronunciada */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             position: relative;
         }
@@ -48,14 +47,14 @@
             padding: 12px 20px;
             border: none;
             border-radius: 25px;
-            background-color: #6200ea; /* Roxo moderno */
+            background-color: #6200ea;
             color: white;
             font-size: 1em;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
         input[type="file"]:hover {
-            background-color: #3700b3; /* Roxo mais escuro ao passar o mouse */
+            background-color: #3700b3;
         }
         input[type="file"]:focus {
             outline: none;
@@ -82,7 +81,7 @@
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth * 0.9, window.innerHeight * 0.6); /* Ajuste do tamanho do renderizador */
+            renderer.setSize(window.innerWidth * 0.9, window.innerHeight * 0.6);
             document.getElementById('container').appendChild(renderer.domElement);
 
             // Luz ambiente + Direcional para melhor iluminação
@@ -97,19 +96,29 @@
             loader.load('copo.glb', function(gltf) {
                 cup = gltf.scene;
                 scene.add(cup);
-                cup.position.y = -1;
-                cup.scale.set(2, 2, 2); /* Aumentei o tamanho do copo */
-                camera.position.set(0, 0, 2); /* Aproximei a câmera */
+
+                // Ajustar a escala do copo
+                cup.scale.set(3, 3, 3);
+
+                // Centralizar o copo na cena
+                cup.position.set(0, -1, 0);
+
+                // Ajustar a posição da câmera para ficar mais próxima
+                camera.position.set(0, 0, 1.5);
+
+                // Focar a câmera no copo
+                camera.lookAt(cup.position);
+
                 animate();
             }, undefined, function(error) {
                 console.error("Erro ao carregar o modelo:", error);
             });
 
-            // Adicionar zoom com scroll do mouse (mantendo centralizado)
+            // Adicionar zoom com scroll do mouse
             window.addEventListener("wheel", function(event) {
                 let zoomSpeed = 0.1;
                 let newZ = camera.position.z + (event.deltaY * zoomSpeed * 0.1);
-                camera.position.z = Math.max(1, Math.min(3, newZ)); /* Limites do zoom ajustados */
+                camera.position.z = Math.max(1, Math.min(3, newZ));
             });
 
             // Rotação automática quando não estiver interagindo
