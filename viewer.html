@@ -47,21 +47,21 @@
             });
         }
 
-        function applyTextureFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const textureData = urlParams.get('texture');
-            if (textureData && cup) {
-                const textureLoader = new THREE.TextureLoader();
-                textureLoader.load(decodeURIComponent(textureData), function(texture) {
-                    cup.traverse(function(child) {
-                        if (child.isMesh) {
-                            child.material.map = texture;
-                            child.material.needsUpdate = true;
-                        }
-                    });
-                });
-            }
-        }
+        function applyTextureFromStorage() {
+    const textureData = localStorage.getItem("uploadedTexture");
+    if (textureData && cup) {
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.load(textureData, function(texture) {
+            cup.traverse(function(child) {
+                if (child.isMesh) {
+                    child.material.map = texture;
+                    child.material.needsUpdate = true;
+                }
+            });
+        });
+    }
+}
+
 
         function animate() {
             requestAnimationFrame(animate);
