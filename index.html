@@ -50,8 +50,8 @@
 </head>
 <body>
     <div id="sidebar">
-        <h1>Mister Copo</h1>
-        <p>Faça o upload de uma texturaaaaaaa</p>
+        <h1>Personalizador de Copo 3D</h1>
+        <p>Faça o upload de uma textura para aplicá-la ao copo.</p>
         <input type="file" id="textureInput" accept="image/*">
     </div>
     <div id="container"></div>
@@ -77,7 +77,7 @@
             loader.load('copo.glb', function(gltf) {
                 cup = gltf.scene;
                 scene.add(cup);
-                cup.position.y = -1;
+                cup.position.set(0, -1, 0);
                 cup.scale.set(1.5, 1.5, 1.5);
                 camera.position.set(0, 0, 3);
                 animate();
