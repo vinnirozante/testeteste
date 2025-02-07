@@ -94,14 +94,16 @@
             directionalLight.position.set(5, 5, 5);
             scene.add(directionalLight);
 
-            const loader = new THREE.GLTFLoader();
             loader.load('copo.glb', function(gltf) {
-                cup = gltf.scene;
-                scene.add(cup);
-                cup.position.set(0, -1, 0);
-                cup.scale.set(1.5, 1.5, 1.5);
-                camera.position.set(0, 0, 3);
-                animate();
+    cup = gltf.scene;
+    scene.add(cup);
+    cup.position.set(0, -1, 0);
+    cup.scale.set(1.5, 1.5, 1.5);
+    camera.position.set(0, 0, 3);
+    applyTextureFromStorage(); // Agora busca a textura salva no LocalStorage
+    animate();
+});
+
             }, undefined, function(error) {
                 console.error("Erro ao carregar o modelo:", error);
             });
