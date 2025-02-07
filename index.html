@@ -7,54 +7,72 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
     <style>
+        /* Estilos modernos */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #f4f4f4; /* Cor de fundo da página (pode ser alterada) */
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2); /* Gradiente suave */
+            color: #333;
         }
         h1 {
             margin-top: 20px;
-            color: #333; /* Cor do título (pode ser alterada) */
-            font-size: 2.5em; /* Tamanho do título (pode ser alterado) */
+            font-size: 2.5em;
+            color: #444;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Sombra no texto */
         }
         p {
-            color: #666; /* Cor do texto descritivo (pode ser alterada) */
-            font-size: 1.2em; /* Tamanho do texto descritivo (pode ser alterado) */
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 20px;
         }
         #container {
-            width: 100%;
-            height: 80vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #fff; /* Cor de fundo do contêiner 3D (pode ser alterada) */
-            border-radius: 10px; /* Bordas arredondadas (pode ser ajustado) */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave (pode ser ajustada) */
+            width: 90%;
+            max-width: 800px;
+            height: 60vh;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra mais pronunciada */
+            overflow: hidden;
+            position: relative;
         }
         canvas {
             display: block;
         }
-        #controls {
-            margin-top: 10px;
-        }
         input[type="file"] {
             margin-top: 20px;
-            padding: 10px;
-            border: 2px solid #ccc; /* Cor da borda do input (pode ser alterada) */
-            border-radius: 5px; /* Bordas arredondadas do input (pode ser ajustado) */
-            background-color: #fff; /* Cor de fundo do input (pode ser alterada) */
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            background-color: #6200ea; /* Roxo moderno */
+            color: white;
+            font-size: 1em;
             cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="file"]:hover {
+            background-color: #3700b3; /* Roxo mais escuro ao passar o mouse */
+        }
+        input[type="file"]:focus {
+            outline: none;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #777;
         }
     </style>
 </head>
 <body>
-    <h1>Mister Copo</h1>
+    <h1>Personalize seu Copo 3D</h1>
     <p>Faça o upload de uma textura para aplicá-la ao copo.</p>
     <input type="file" id="textureInput" accept="image/*">
     <div id="container"></div>
+    <div class="footer">Desenvolvido com ❤️ por você!</div>
 
     <script>
         let scene, camera, renderer, cup;
@@ -64,13 +82,13 @@
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight * 0.8);
+            renderer.setSize(window.innerWidth * 0.9, window.innerHeight * 0.6); /* Ajuste do tamanho do renderizador */
             document.getElementById('container').appendChild(renderer.domElement);
 
             // Luz ambiente + Direcional para melhor iluminação
-            const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1); /* Cor da luz ambiente (pode ser alterada) */
+            const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
             scene.add(light);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1); /* Cor da luz direcional (pode ser alterada) */
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
             directionalLight.position.set(5, 5, 5);
             scene.add(directionalLight);
 
@@ -80,8 +98,8 @@
                 cup = gltf.scene;
                 scene.add(cup);
                 cup.position.y = -1;
-                cup.scale.set(1.5, 1.5, 1.5); /* Tamanho do copo na exibição (pode ser ajustado) */
-                camera.position.set(0, 0, 3); /* Posição da câmera (pode ser ajustada) */
+                cup.scale.set(2, 2, 2); /* Aumentei o tamanho do copo */
+                camera.position.set(0, 0, 2); /* Aproximei a câmera */
                 animate();
             }, undefined, function(error) {
                 console.error("Erro ao carregar o modelo:", error);
@@ -89,15 +107,15 @@
 
             // Adicionar zoom com scroll do mouse (mantendo centralizado)
             window.addEventListener("wheel", function(event) {
-                let zoomSpeed = 0.1; /* Velocidade do zoom (pode ser ajustada) */
+                let zoomSpeed = 0.1;
                 let newZ = camera.position.z + (event.deltaY * zoomSpeed * 0.1);
-                camera.position.z = Math.max(1.5, Math.min(4, newZ)); /* Limites do zoom (pode ser ajustado) */
+                camera.position.z = Math.max(1, Math.min(3, newZ)); /* Limites do zoom ajustados */
             });
 
             // Rotação automática quando não estiver interagindo
             function rotateCup() {
                 if (cup && !controlsEnabled) {
-                    cup.rotation.y += 0.005; /* Velocidade da rotação automática (pode ser ajustada) */
+                    cup.rotation.y += 0.005;
                 }
             }
 
