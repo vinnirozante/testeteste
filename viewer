@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualização do Copo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #FFF;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let scene, camera, renderer, cup;
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff);
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
+            scene.add(light);
+
+            const loader = new THREE.GLTFLoader();
+            loader.load('copo.glb', function(gltf) {
+                cup = gltf.scene;
+                scene.add(cup);
+                cup.position.set(0, -1, 0);
+                cup.scale.set(1.5, 1.5, 1.5);
+                camera.position.set(0, 0, 3);
+                applyTextureFromURL();
+                animate();
+            });
+        }
+
+        function applyTextureFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const textureData = urlParams.get('texture');
+            if (textureData && cup) {
+                const textureLoader = new THREE.TextureLoader();
+                textureLoader.load(decodeURIComponent(textureData), function(texture) {
+                    cup.traverse(function(child) {
+                        if (child.isMesh) {
+                            child.material.map = texture;
+                            child.material.needsUpdate = true;
+                        }
+                    });
+                });
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (cup) {
+                cup.rotation.y += 0.005;
+            }
+            renderer.render(scene, camera);
+        }
+
+        init();
+    </script>
+</body>
+</html>
