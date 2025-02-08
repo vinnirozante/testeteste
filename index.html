@@ -28,6 +28,7 @@
             text-align: center;
         }
         #sidebar img {
+            border-radius: 20px;
             width: 80%;
             margin-bottom: 20px;
         }
@@ -57,7 +58,7 @@
             border: none;
             cursor: pointer;
             font-weight: bold;
-            border-radius: 100px;
+            border-radius: 5px;
         }
         input[type="file"]:hover {
             background: #FFD166;
@@ -67,7 +68,7 @@
 <body>
     <div id="sidebar">
         <img src="logo.png" alt="Mister Copo Logo">
-        <h1>Mister Copo</h1>
+        <h1>Personalize seu Copo 3D</h1>
         <p>Faça o upload de uma textura e veja o resultado aplicado ao copo.</p>
         <input type="file" id="textureInput" accept="image/*">
     </div>
@@ -78,9 +79,6 @@
         let controlsEnabled = false;
 
         function init() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ antialias: true });
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0xffffff);
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -94,16 +92,14 @@
             directionalLight.position.set(5, 5, 5);
             scene.add(directionalLight);
 
+            const loader = new THREE.GLTFLoader();
             loader.load('copo.glb', function(gltf) {
-    cup = gltf.scene;
-    scene.add(cup);
-    cup.position.set(0, -1, 0);
-    cup.scale.set(1.5, 1.5, 1.5);
-    camera.position.set(0, 0, 3);
-    applyTextureFromStorage(); // Agora busca a textura salva no LocalStorage
-    animate();
-});
-
+                cup = gltf.scene;
+                scene.add(cup);
+                cup.position.set(0, -1, 0);
+                cup.scale.set(1.5, 1.5, 1.5);
+                camera.position.set(0, 0, 3);
+                animate();
             }, undefined, function(error) {
                 console.error("Erro ao carregar o modelo:", error);
             });
